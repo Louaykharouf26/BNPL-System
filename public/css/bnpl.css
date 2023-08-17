@@ -1,0 +1,190 @@
+.right{
+    position: absolute;
+    right: 5%;
+}
+.box{
+    position: absolute;
+    left: 30%;
+    width: 539px;
+height: 779px;
+flex-shrink: 0;
+border-radius: 40px;
+background: #FFF;
+/*box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);*/
+}
+.price{
+    position: relative;
+    top: 2%;
+    left: 8%;
+    width: 451px;
+height: 57px;
+flex-shrink: 0;
+border-radius: 9px;
+border: 1px  ;
+background: #E1D9D1 ;
+box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);
+}
+.pricedetails{
+    position: relative;
+    top:15%;
+    left: 15%;
+    width: 500px;
+height: 19px;
+flex-shrink: 0;
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
+.split{
+    position: relative;
+    top: 8%;
+    left: 8%;
+    width: 451px;
+height: 280px;
+flex-shrink: 0;
+border-radius: 9px;
+border: 1px  ;
+background: #E1D9D1;
+box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);
+}.split1{
+    position: absolute;
+    top: 15%;
+    left: 35%;
+    width: 451px;
+height: 280px;
+flex-shrink: 0;
+border-radius: 9px;
+border: 1px  ;
+background: #E1D9D1;
+box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);
+}
+.splitdetails{
+    position: relative;
+    top:5%;
+    left:5%;
+    width: 500px;
+height: 19px;
+flex-shrink: 0;
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
+.first{
+    position: relative;
+    top:15%;
+    left:5%;
+    width: 500px;
+height: 19px;
+flex-shrink: 0;
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
+.number{
+    position: relative;
+    top:5%;
+    right:-75%;
+    width: 500px;
+height: 19px;
+flex-shrink: 0;
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
+.paydetails{
+    position: relative;
+    top: 14%;
+    left: 8%;
+    width: 451px;
+height: 280px;
+flex-shrink: 0;
+border-radius: 9px;
+border: 1px  ;
+background: #E1D9D1;
+box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);
+}
+.payinfo{
+    position: relative;
+    top:5%;
+    left:5%;
+    width: 500px;
+height: 19px;
+flex-shrink: 0;
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
+.infoform{
+    position: relative;
+    top:15%;
+    left:5%;
+}
+.cn{
+    width: 150px;
+}
+.cvv{
+    width: 150px;
+}
+.cn1{
+    width: 150px;
+    position: relative;
+    left: 45%;
+    top: -115%;
+}
+.edate{
+    width: 150px;
+    position: relative;
+    left: 57%;
+    top: -240%;
+}
+.paybtn{
+    position: relative;
+    top: -35%;
+    left: -5%;
+    width: 451px;
+height: 57px;
+flex-shrink: 0;
+border-radius: 9px;
+border: 1px  ;
+background: #E1D9D1 ;
+box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
+.paybtn1{
+    position: absolute;
+    top: 65%;
+    left: 35%;
+    width: 451px;
+height: 67px;
+flex-shrink: 0;
+border-radius: 9px;
+border: 1px  ;
+background: #E1D9D1 ;
+box-shadow: 0px 4px 35px 0px rgba(0, 0, 0, 0.08);
+color: #0A0708;
+font-family: Poppins;
+font-size: 20px;
+font-style: normal;
+font-weight: 300;
+line-height: normal;
+}
