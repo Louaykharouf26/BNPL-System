@@ -61,6 +61,15 @@
                         
 
 
+                        <div class="row mb-3 ">
+                        <select id="password-confirm1" class="form-select" name="role"  aria-label="Default select example">
+  <option selected>Select Your Role</option>
+  <option value="User">User</option>
+  <option value="Admin">Admin</option>
+  <option value="Merchant">Merchant</option>
+</select>
+                        </div>
+                        
 
 
                         <div class="row mb-0">

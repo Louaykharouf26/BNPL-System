@@ -20,6 +20,8 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->string('cvv')->nullable();
+            $table->string('date_first_purchase')->nullable();
+            $table->string('role')->default('User');
             $table->string('expiry_date')->nullable();
             $table->string('card_number')->nullable();
             $table->float('paidamount')->nullable();

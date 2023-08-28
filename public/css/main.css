@@ -478,7 +478,7 @@ color: #34A853;
     width: 451px;
     height: 54px;
     left: 5%;
-    top: 75%;
+    top: 87%;
     
     background: #0163E0;
     border-radius: 10px;
@@ -709,6 +709,19 @@ height: 57px;
 position: absolute;
 left: 5%;
 top: 63%;
+
+
+background: #FFFFFF;
+border: 1px solid #ADADAD;
+border-radius: 9px;
+}
+#password-confirm1{
+    box-sizing: border-box;
+width: 451px;
+height: 57px;
+position: absolute;
+left: 5%;
+top: 75%;
 
 
 background: #FFFFFF;

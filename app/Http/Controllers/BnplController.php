@@ -6,31 +6,28 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
+use App\Mail\InvoiceEmail;
+use Illuminate\Support\Facades\Mail;
+use PDF;
+use App\Models\User; // Make sure this points to the correct namespace for your User model
+
 class BnplController extends Controller
 {
     public function calculateMonthlyInstallments(Request $request)
     {
-        // Retrieve the product and price from the request
-       // $product = $request->input('product');
-        //$price = $request->input('price');
-        //$installmentNumber = $request->input('installment_number');
-        //$product = $this->fetchProductDetails($id);
-        //$price = $product->price;
-        // Perform the BNPL calculations (example)
         $totalAmount = $request->input('totalAmount');
         $installmentsData = $request->input('installmentsData');
         $decodedData = json_decode(urldecode($installmentsData), true);
-        $items = $decodedData['items'];// Get the items array from the request
-       // Session::put('items', $items);
-       
+        $items = $decodedData['items'];
         if($totalAmount<200){
             return response()->json(['error' => 'the totalAmount cannot be devided']);
         }
         else {
         $installments = [
-            //'product' => $product->name,
             'price' => $totalAmount,
             'items' =>$items,
             'monthly_installments' => [
@@ -54,36 +51,24 @@ class BnplController extends Controller
             'totalAmount' => $totalAmount,
             'items' => $items,
         ];
-
-        // Return the response
-        //return response()->json($installments);
-        //return view('bnpl-result', ['installments' => $installments]);
-       // return response()->json($installments);
-      // return response()->json($installmentsData);
-       //return $totalAmount;
       return response()->json($installmentsData);
     }
     }
     public function showBNPLResult(Request $request){
         $totalAmount = $request->input('totalAmount');
-        //$items = $request->input('items');
         $user = Auth::user();
         $email = $user->email;
         $installmentsData = $request->input('installmentsData');
         $decodedData = json_decode(urldecode($installmentsData), true);
-        $items = $decodedData['items'];// Get the items array from the request
-        //Session::put('totalAmount', $totalAmount);
+        $items = $decodedData['items'];
+        Session::put('totalAmount', $totalAmount);
         Session::put('items', $items);
-       // $items = Session::get('items');
-
         if($totalAmount<200){
             return response()->json(['error' => 'the totalAmount cannot be devided']);
         }
         else {
         $installments = [
-            //'product' => $product->name,
             'price' => $totalAmount,
-           // 'items'=>$items,
            'items' => $items,
             'email' => $email,
             'monthly_installments' => [
@@ -101,12 +86,6 @@ class BnplController extends Controller
                 ],
             ],
         ];
-       // $this->showPaymentSuccess($request, $totalAmount);
-
-        // Return the response
-        //return response()->json($installments);
-        //return view('bnpl-result', ['installments' => $installments]);
-       // return response()->json($installments);
        return view('bnpl-result', ['installments' => $installments, 'totalAmount' => $totalAmount,'items'=>$items]);
     }
     }
@@ -114,12 +93,9 @@ class BnplController extends Controller
     public function showPaymentSuccess(Request $request)
     {
         $user = Auth::user();
-       // $totalAmount = $this->calculateMonthlyInstallments($request);
-      // $localStorageScript = '<script>var totalAmount = localStorage.getItem("totalAmount");</script>';
        $totalAmount = Session::get('totalAmount');
        $items = Session::get('items');
-       // Calculate installment amount based on totalAmount
-      // $installmentAmount = '<script>document.write(totalAmount / 3);</script>';
+
            $email = $user->email;
     
         $installments = [
@@ -142,17 +118,93 @@ class BnplController extends Controller
             ],
         ];
     
-        // Use the extracted data in showPaymentSuccess view
         return view('payment_success', [
             'installments' => $installments
-           // 'totalAmount' => $totalAmount
+
         ]);
     }
+    public function showReminderSuccess(Request $request)
+    {
+        $user = Auth::user();
+    $totalAmount = $user->remainingamount;
+   // $items = Session::get('items');
+    $email = $user->email;
+
+    $installments = [
+        'price' => $totalAmount,
+        'email' => $email,
+//'items' => $items,
+        'monthly_installments' => [],
+    ];
+
+    if ($totalAmount > $totalAmount / 2) {
+        $installments['monthly_installments'] = [
+            [
+                'month' => 'Month 1',
+                'amount' => $totalAmount / 2,
+            ],
+            [
+                'month' => 'Month 2',
+                'amount' => $totalAmount / 2,
+            ],
+        ];
+    } else {
+        $installments['monthly_installments'] = [
+            [
+                'month' => 'Single Payment',
+                'amount' => $totalAmount,
+            ],
+        ];
+    }
     
-    public function handleFormSubmission(Request $request)
+        return view('reminder_success', [
+            'installments' => $installments
+
+        ]);
+    }
+    public function ReminderPage(Request $request)
 {
     $user = Auth::user();
-   // $cvv = $request->input('cvv');
+    $totalAmount = $user->remainingamount;
+    $paid = $user->paidamount;
+   // $items = Session::get('items');
+    $email = $user->email;
+
+    $installments = [
+        'price' => $totalAmount,
+        'email' => $email,
+//'items' => $items,
+        'monthly_installments' => [],
+    ];
+
+    if ($totalAmount >  $paid ) {
+        $installments['monthly_installments'] = [
+            [
+                'month' => 'Month 1',
+                'amount' => $totalAmount / 2,
+            ],
+            [
+                'month' => 'Month 2',
+                'amount' => $totalAmount / 2,
+            ],
+        ];
+    } else {
+        $installments['monthly_installments'] = [
+            [
+                'month' => 'Single Payment',
+                'amount' => $totalAmount,
+            ],
+        ];
+    }
+
+    return view('reminder', [
+        'installments' => $installments
+    ]);
+}
+
+    public function handleFormSubmission(Request $request)
+{
+   $user = Auth::user();
    $totalAmount = Session::get('totalAmount');
    $items = Session::get('items') ;
     $itemData = [];
@@ -163,56 +215,99 @@ class BnplController extends Controller
        ];
    }
    $user->items = $itemData;;
-
     $paidamount=$request->input('totalAmount');
-    // Update the user's record with the CVV
-   // $user->cvv = $cvv;
     $user->paidamount = $totalAmount/3;
-    $user->remainingamount = $totalAmount/2;
+    $user->remainingamount = $totalAmount-$paidamount;
+    $user->date_first_purchase=date('d-m-Y H:i:s');
     $user->save();
+    $pdfData = [
+        'paidAmount' => $user->paidamount,
+        'totalAmount' => $totalAmount,
+        'items' => $itemData,
+    ];
+    $storagePath = storage_path('app/public');
+    $randomNumber = rand(1000, 9999);
+    $newFileName = 'invoice_' . $randomNumber . '.pdf';
+    $pdf = PDF::loadView('pdf.invoice', $pdfData);
+    while (File::exists($storagePath . '/' . $newFileName)) {
+        $randomNumber = rand(1000, 9999);
+        $newFileName = 'invoice_' . $randomNumber . '.pdf';
+    }
+    $pdf->save($storagePath . '/' . $newFileName);
+    $pdfPath = $storagePath . '/' . $newFileName;
+    Mail::to($user->email)->send(new InvoiceEmail($pdfPath));
     return Redirect::to('/payment/success');
-    // Rest of your code (redirect, response, etc.)
 }
-   /* public function calculateMonthlyInstallments(Request $request,$id)
-    {
-        $installmentNumber = $request->input('installment_number');
-       // $product = $request->input('product');
-        //$price = $request->input('price');
-       
-        $product = $this->fetchProductDetails($id);
-        $price = $product->price;
-        if ($installmentNumber > 0) {
-            $installments = [
-                'product' => $product,
-                'price' => $price,
-                'monthly_installments' => [],
-            ];
-
-            $installmentAmount = $price / $installmentNumber;
-
-            for ($i = 1; $i <= $installmentNumber; $i++) {
-                $installments['monthly_installments'][] = [
-                    'month' => 'Month ' . $i,
-                    'amount' => $installmentAmount,
-                ];
-            }
-
-            return response()->json($installments);
-        }
-
-        return response()->json(['error' => 'Invalid installment number'], 400);
-    }*/
-    private function fetchProductDetails($id)
-    {
-        // Implement your logic to fetch the product details from the database or any other source
-        // Return the product object
-        $product = DB::connection('e_commerce')->table('products')->find($id);
-
-
-        if (!$product) {
-            abort(404, 'Product not found');
-        }
+public function handleFormSubmission1(Request $request)
+{
+   $user = Auth::user();
+   $totalAmount = Session::get('totalAmount');
+   $items = Session::get('items') ;
+    $itemData = [];
+   foreach ($items as $item) {
+       $itemData[] = [
+           'title' => $item['title'],
+           'quantity' => $item['qty']
+       ];
+   }
+ //  $user->items = $itemData;;*/
+    $paidamount=$request->input('totalAmount');
+    $lastpaid = $user->paidamount;
+    $remainingamount = $user->remainingamount;
     
-        return $product;
+    // Check if remaining amount is less than twice the last paid amount
+    if ($remainingamount < ($lastpaid * 2)-1) {
+        $user->remainingamount = 0;
+        $user->paidamount = $totalAmount;
+    } else {
+        $user->remainingamount = $totalAmount - $lastpaid * 2;
+        $user->paidamount = $lastpaid * 2;
+    }
+    
+    $user->date_first_purchase = date('d-m-Y H:i:s');
+    $user->save();
+    
+    $pdfData = [
+        'paidAmount' => $paidamount,
+        'totalAmount' => $totalAmount,
+        'items' => $itemData,
+    ];
+    
+    $storagePath = storage_path('app/public');
+    $randomNumber = rand(1000, 9999);
+    $newFileName = 'invoice_' . $randomNumber . '.pdf';
+    
+    $pdf = PDF::loadView('pdf.invoice', $pdfData);
+    while (File::exists($storagePath . '/' . $newFileName)) {
+        $randomNumber = rand(1000, 9999);
+        $newFileName = 'invoice_' . $randomNumber . '.pdf';
+    }
+    $pdf->save($storagePath . '/' . $newFileName);
+    
+    $pdfPath = $storagePath . '/' . $newFileName;
+    Mail::to($user->email)->send(new InvoiceEmail($pdfPath));
+    
+    return Redirect::to('/reminder');
+    
+}
+public function logout()
+{
+    Auth::logout();
+    return redirect('/login'); // Redirect to the login page after logout
+}
+public function calculateTotalPaidAmount()
+    { 
+
+        if (auth()->user()->role === 'Admin') {
+            $usersWithRole = User::where('role', 'User')->get();
+            $usersWithRemainingAmount = User::where('remainingamount', '>', 0)->get();
+
+        $totalPaidAmount = $usersWithRole->sum('paidamount');
+
+        return view('AdminDashboard', compact('totalPaidAmount','usersWithRemainingAmount'));
+        } else {
+            abort(403, 'Unauthorized');
+        }
+        
     }
 }

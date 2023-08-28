@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: bnpl
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db-data:/var/lib/mysql
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    links:
+      - db
+    environment:
+      DB_HOST: db
+      DB_DATABASE: bnpl
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+    volumes:
+      - ./vendor:/app/vendor
+volumes:
+  db-data:

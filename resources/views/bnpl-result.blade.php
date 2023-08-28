@@ -13,10 +13,14 @@
             {{$installments['email']}}
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Role : {{ auth()->user()->role }}</a></li>
+
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <form action="{{ route('logout') }}" method="POST">
+    @csrf
+    <li><button class="dropdown-item"  type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button> </li>
+</form>
+            
           </ul>
 </div>
     </div>
@@ -24,29 +28,7 @@
 </nav>
 @endsection
 @section('bnplresult')
-<!--<h2>BNPL Information</h2>
 
-
-<p>Price: {{ $installments['price'] }}</p>
-
-<h3>Monthly Installments:</h3>
-<ul>
-    @foreach ($installments['monthly_installments'] as $installment)
-        <li>{{ $installment['month'] }} - ${{ $installment['amount'] }}</li>
-    @endforeach
-</ul>
-<ul>
-@foreach ($installments['monthly_installments'] as $index => $installment)
-    @if ($index === 0)
-         Today : {{$ldate = date('Y-m-d H:i:s');}}
-         
-        <p>Amount to pay today: ${{ $installment['amount'] }}</p>
-        <p>Next Amount is : {{$final = date("Y-m-d", strtotime("+1 month"));}} --- ${{ $installment['amount'] }} </p>
-        <p>The last ammount will be in : {{$final = date("Y-m-d", strtotime("+2 month"));}} --- ${{ $installment['amount'] }}  </p>
-    @endif
-    <li>{{ $installment['month'] }} - ${{ $installment['amount'] }}</li>
-@endforeach
-</ul>-->
 
 <div class="box">
     <div class="price">
@@ -64,41 +46,26 @@
          @if ($index === 1)
        <!--  Today : {{$ldate = date('Y-m-d H:i:s');}}-->
          
-         <p class="first">{{$final = date("Y-m-d", strtotime("+1 month"));}}          <p class="number">${{ number_format($installment['amount'], 3) }}</p></p>
+         <p class="first">{{$final = date("d-m-Y", strtotime("+1 month"));}}          <p class="number">${{ number_format($installment['amount'], 3) }}</p></p>
          @endif
          @if ($index === 2)
        <!--  Today : {{$ldate = date('Y-m-d H:i:s');}}-->
          
-         <p class="first">{{$final = date("Y-m-d", strtotime("+2 month"));}}          <p class="number">${{ number_format($installment['amount'], 3) }}</p></p>
+         <p class="first">{{$final = date("d-m-Y", strtotime("+2 month"));}}          <p class="number">${{ number_format($installment['amount'], 3) }}</p></p>
          @endif
          @endforeach
    
     </div>
     <div class="paydetails">
-     <p class="payinfo"><i class="bi bi-credit-card-2-front-fill"></i> Payment Informations</p>
+
      <form class="row g-3 infoform" method="POST" action="{{ route('make-payment') }}">
      @csrf
-     <div class="mb-3 row">
-    <label for="staticEmail" class="col-sm-2 col-form-label cn">Card Number</label> 
-    <div class="col-sm-10">
-      <input type="text" name="cn" class="form-control" id="staticEmail" >
-    </div>
-  </div>
-  <div class="mb-3 row">
+  
     
-    <label for="inputPassword" class="col-sm-2 col-form-label cn">CVV</label>
-    <div class="col-sm-10">
-      <input type="text" class="form-control cvv" name="cvv" id="inputPassword">
-    </div>
-  </div>
+
 
  
-  <div class="mb-3 row">
-    <label for="inputPassword" class="col-sm-2 col-form-label cn1">Expiry date</label>
-    <div class="col-sm-10">
-      <input type="text" name="ed" class="form-control edate" id="inputPassword">
-    </div>
-  </div>
+
   @foreach ($installments['monthly_installments'] as $index => $installment)
     @if ($index === 0)
        <!--  Today : {{$ldate = date('Y-m-d H:i:s');}}-->
@@ -114,13 +81,4 @@
     </div>
 </div>
 
-<h2>Items:</h2>
-        <ul>
-        @foreach ($installments['items'] as $item)
-    <li>{{ $item['title'] }}</li>
-    <li>{{ $item['qty'] }}</li>
-@endforeach
-
-            
-        </ul>
 @endsection

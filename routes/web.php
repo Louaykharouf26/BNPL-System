@@ -23,6 +23,8 @@ Route::get('/SignUp', function () {
 Route::get('/SignIn', function () {
     return view('SignIn');
 });
+
+Route::get('/testpage', [BnplController::class, 'calculateTotalPaidAmount']);
 Route::post('/products', [App\Http\Controllers\ProductController::class, 'store']);
 Route::get('/ProductsAdd', function () {
     return view('products');
@@ -44,7 +46,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/calculate-installments', [BnplController::class, 'calculateMonthlyInstallments'])->name('calculate.installments');
     Route::get('/bnpl-result', [BnplController::class, 'showBNPLResult'])->name('bnpl.result');
     Route::get('/calculate-installments', [BnplController::class, 'calculateMonthlyInstallments'])->name('calculate.installments');
+    Route::get('/reminder',[BnplController::class, 'ReminderPage'] )->name('reminder');
+    
 
+    
+    
+});
+Route::group(['middleware' => 'adminonly'], function () {
+    Route::get('/payment/success', [BnplController::class, 'showPaymentSuccess'])->name('payment.success');
     
     
 });
@@ -64,6 +73,11 @@ Route::get('/payment-failure', function () {
 Route::get('/make-payment', [PaymentController::class, 'makePayment']);
 Route::post('/make-payment', [PaymentController::class, 'makePayment'])->name('make-payment');
 
-Route::get('/payment/success', [BnplController::class, 'showPaymentSuccess'])->name('payment.success');
+//Route::get('/payment/success', [BnplController::class, 'showPaymentSuccess'])->name('payment.success');
 Route::post('/payment/callback', [PaymentController::class, 'handleCallback'])->name('payment.callback');
 Route::post('/submit-installments', [BnplController::class, 'handleFormSubmission'])->name('submitInstallments');
+Route::post('/submit-reminder-installments', [BnplController::class, 'handleFormSubmission1'])->name('submitreminderInstallments');
+Route::post('/logout', [BnplController::class, 'logout'])->name('logout');
+Route::get('/reminder/success', [BnplController::class, 'showReminderSuccess'])->name('reminder.success');
+Route::get('/reminder-payment', [PaymentController::class, 'reminderPayment']);
+Route::post('/reminder-payment', [PaymentController::class, 'reminderPayment'])->name('reminder-payment');

@@ -27,9 +27,11 @@
   </div>
 </nav>
 @endsection
+
+
 @section('paid')
 
-<form action="{{ route('submitInstallments') }}" method="post">
+<form action="{{ route('submitreminderInstallments') }}" method="post">
     @csrf
 <div class="split1">
      <p class="splitdetails"><i class="bi bi-credit-card-2-back-fill"></i> Split Your Payment in 3 Amounts :</p>
@@ -54,20 +56,11 @@
    
     </div>
     <div class="items">
-    <h2>Items:</h2>
-        <ul>
-        @foreach ($installments['items'] as $item)
-    <li>{{ $item['title'] }}</li>
     
-    <li>Quantity for this item : {{ $item['qty'] }}</li>
-@endforeach
-</ul>
     <button type="submit" class="btn  mb-3 paybtn1" name="totalAmount" value="{{ number_format($installment['amount'], 3) }}">Confirm Your payment to Recieve a mail for the next amount</button>
     </div>
     </form>
 
-
-
             
-      
+ 
 @endsection
