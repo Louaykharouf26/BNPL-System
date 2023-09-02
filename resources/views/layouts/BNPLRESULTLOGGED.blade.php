@@ -25,4 +25,5 @@
  @yield('navbar')
   @yield('bnplresult')
   @yield('paid')
+  @yield('afterpay')
 </body>

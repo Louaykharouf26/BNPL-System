@@ -37,7 +37,9 @@ class PaymentController extends Controller
         $user->cvv = $cvv;
         $user->expiry_date = $expiry_date;
         $user->save();
+        $payment_number=$user->payment_number;
         $totalAmount = $request->input('totalAmount');
+     //   if()
         $pay= paypage::sendPaymentCode('all')
                ->sendTransaction('sale')
                 ->sendCart(10,$totalAmount,'test')

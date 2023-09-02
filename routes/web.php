@@ -23,6 +23,9 @@ Route::get('/SignUp', function () {
 Route::get('/SignIn', function () {
     return view('SignIn');
 });
+Route::get('/afterpay', function () {
+    return view('BNPLAfterPayment');
+});
 
 Route::get('/testpage', [BnplController::class, 'calculateTotalPaidAmount']);
 Route::post('/products', [App\Http\Controllers\ProductController::class, 'store']);
@@ -72,6 +75,8 @@ Route::get('/payment-failure', function () {
 })->name('payment.failure');*/
 Route::get('/make-payment', [PaymentController::class, 'makePayment']);
 Route::post('/make-payment', [PaymentController::class, 'makePayment'])->name('make-payment');
+Route::put('/user/{id}', [BnplController::class, 'update'])->name('user.update');
+Route::delete('/user/{id}', [BnplController::class, 'destroy'])->name('user.delete');
 
 //Route::get('/payment/success', [BnplController::class, 'showPaymentSuccess'])->name('payment.success');
 Route::post('/payment/callback', [PaymentController::class, 'handleCallback'])->name('payment.callback');
@@ -81,3 +86,4 @@ Route::post('/logout', [BnplController::class, 'logout'])->name('logout');
 Route::get('/reminder/success', [BnplController::class, 'showReminderSuccess'])->name('reminder.success');
 Route::get('/reminder-payment', [PaymentController::class, 'reminderPayment']);
 Route::post('/reminder-payment', [PaymentController::class, 'reminderPayment'])->name('reminder-payment');
+Route::post('/user', [BnplController::class, 'store'])->name('user.store');

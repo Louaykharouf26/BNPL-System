@@ -127,6 +127,7 @@ class BnplController extends Controller
     {
         $user = Auth::user();
     $totalAmount = $user->remainingamount;
+    $payment_number=$user->payment_number;
    // $items = Session::get('items');
     $email = $user->email;
 
@@ -137,7 +138,7 @@ class BnplController extends Controller
         'monthly_installments' => [],
     ];
 
-    if ($totalAmount > $totalAmount / 2) {
+    if ($payment_number ==1) {
         $installments['monthly_installments'] = [
             [
                 'month' => 'Month 1',
@@ -148,7 +149,7 @@ class BnplController extends Controller
                 'amount' => $totalAmount / 2,
             ],
         ];
-    } else {
+    } elseif ($payment_number == 2) {
         $installments['monthly_installments'] = [
             [
                 'month' => 'Single Payment',
@@ -165,6 +166,7 @@ class BnplController extends Controller
     public function ReminderPage(Request $request)
 {
     $user = Auth::user();
+    $payment_number=$user->payment_number;
     $totalAmount = $user->remainingamount;
     $paid = $user->paidamount;
    // $items = Session::get('items');
@@ -177,7 +179,7 @@ class BnplController extends Controller
         'monthly_installments' => [],
     ];
 
-    if ($totalAmount >  $paid ) {
+    if ($payment_number ==1 ) {
         $installments['monthly_installments'] = [
             [
                 'month' => 'Month 1',
@@ -188,13 +190,15 @@ class BnplController extends Controller
                 'amount' => $totalAmount / 2,
             ],
         ];
-    } else {
+    } elseif ($payment_number == 2) { 
+        
         $installments['monthly_installments'] = [
             [
                 'month' => 'Single Payment',
                 'amount' => $totalAmount,
             ],
         ];
+    
     }
 
     return view('reminder', [
@@ -205,6 +209,7 @@ class BnplController extends Controller
     public function handleFormSubmission(Request $request)
 {
    $user = Auth::user();
+   $payment_number = $user->payment_number;
    $totalAmount = Session::get('totalAmount');
    $items = Session::get('items') ;
     $itemData = [];
@@ -218,6 +223,7 @@ class BnplController extends Controller
     $paidamount=$request->input('totalAmount');
     $user->paidamount = $totalAmount/3;
     $user->remainingamount = $totalAmount-$paidamount;
+    $user->payment_number=$payment_number+1;
     $user->date_first_purchase=date('d-m-Y H:i:s');
     $user->save();
     $pdfData = [
@@ -226,21 +232,24 @@ class BnplController extends Controller
         'items' => $itemData,
     ];
     $storagePath = storage_path('app/public');
-    $randomNumber = rand(1000, 9999);
-    $newFileName = 'invoice_' . $randomNumber . '.pdf';
+   // $randomNumber = rand(1000, 9999);
+    $username=$user->name;
+    $payment_number=$user->payment_number;
+    $newFileName = 'invoice_' . $username . '_payment number_' .$payment_number.'.pdf';
     $pdf = PDF::loadView('pdf.invoice', $pdfData);
     while (File::exists($storagePath . '/' . $newFileName)) {
         $randomNumber = rand(1000, 9999);
-        $newFileName = 'invoice_' . $randomNumber . '.pdf';
+        $newFileName = 'invoice_' . $username . '_payment number_' .$payment_number.'_'.$randomNumber.'.pdf';
     }
     $pdf->save($storagePath . '/' . $newFileName);
     $pdfPath = $storagePath . '/' . $newFileName;
     Mail::to($user->email)->send(new InvoiceEmail($pdfPath));
-    return Redirect::to('/payment/success');
+    return Redirect::to('afterpay');
 }
 public function handleFormSubmission1(Request $request)
 {
    $user = Auth::user();
+   $payment_number = $user->payment_number;
    $totalAmount = Session::get('totalAmount');
    $items = Session::get('items') ;
     $itemData = [];
@@ -256,12 +265,13 @@ public function handleFormSubmission1(Request $request)
     $remainingamount = $user->remainingamount;
     
     // Check if remaining amount is less than twice the last paid amount
-    if ($remainingamount < ($lastpaid * 2)-1) {
+    if ($payment_number==2) {
         $user->remainingamount = 0;
         $user->paidamount = $totalAmount;
     } else {
         $user->remainingamount = $totalAmount - $lastpaid * 2;
         $user->paidamount = $lastpaid * 2;
+        $user->payment_number=$payment_number+1;
     }
     
     $user->date_first_purchase = date('d-m-Y H:i:s');
@@ -275,19 +285,21 @@ public function handleFormSubmission1(Request $request)
     
     $storagePath = storage_path('app/public');
     $randomNumber = rand(1000, 9999);
-    $newFileName = 'invoice_' . $randomNumber . '.pdf';
+    $username=$user->name;
+    $payment_number=$user->payment_number;
+    $newFileName = 'invoice_' . $username . '_payment number_' .$payment_number.'.pdf';
     
     $pdf = PDF::loadView('pdf.invoice', $pdfData);
     while (File::exists($storagePath . '/' . $newFileName)) {
         $randomNumber = rand(1000, 9999);
-        $newFileName = 'invoice_' . $randomNumber . '.pdf';
+        $newFileName = 'invoice_' . $username . '_payment number_' .$payment_number.'_'.$randomNumber.'.pdf';
     }
     $pdf->save($storagePath . '/' . $newFileName);
     
     $pdfPath = $storagePath . '/' . $newFileName;
     Mail::to($user->email)->send(new InvoiceEmail($pdfPath));
     
-    return Redirect::to('/reminder');
+    return Redirect::to('/afterpay');
     
 }
 public function logout()
@@ -309,5 +321,44 @@ public function calculateTotalPaidAmount()
             abort(403, 'Unauthorized');
         }
         
+    }
+    public function update(Request $request, $id) {
+        $user = User::find($id);
+    
+        if ($user) {
+            $newRemainingAmount = $request->input('newRemainingAmount');
+            $newusername = $request->input('newusername');
+            $user->name = $newusername;
+            $user->remainingamount=$newRemainingAmount;
+            $user->save();
+    
+            return Redirect::to('/testpage'); // Redirect to the appropriate route after updating
+        }
+    
+        return redirect()->back()->with('error', 'User not found.');
+    }
+    public function destroy($id) {
+        $user = User::find($id);
+    
+        if ($user) {
+            $user->delete();
+            return Redirect::to('/testpage'); // Redirect to the appropriate route after deletion
+        }
+    
+        return redirect()->back()->with('error', 'User not found.');
+    }
+    public function store(Request $request) {
+        // Validate the input fields
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'remainingamount' => 'required|numeric',
+            'email' =>"required",
+            "password" =>"required"
+        ]);
+    
+        // Create a new user
+        User::create($validatedData);
+    
+        return Redirect::to('/testpage');  // Redirect to the appropriate route after adding the user
     }
 }

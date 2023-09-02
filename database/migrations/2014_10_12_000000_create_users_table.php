@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('payment_number')->nullable();
             $table->string('cvv')->nullable();
             $table->string('date_first_purchase')->nullable();
             $table->string('role')->default('User');

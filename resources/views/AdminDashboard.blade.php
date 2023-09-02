@@ -69,10 +69,92 @@
 
               </div>
             </div><!-- End Sales Card -->
+            <!-- Button to trigger the Add User modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+    Add New User
+</button>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('user.store') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="remainingamount" class="form-label">email </label>
+                        <input type="text" id="remainingamount" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="remainingamount" class="form-label">Give the new User a password </label>
+                        <input type="password" id="remainingamount" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="remainingamount" class="form-label">Remaining Amount</label>
+                        <input type="number" id="remainingamount" name="remainingamount" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
             <h5 class="card-title">Users with Remaining Amount</h5>
             <ul>
                 @foreach($usersWithRemainingAmount as $user)
                     <li>{{ $user->name }} - Remaining Amount: {{ $user->remainingamount }} - Date of the last purchase is : {{$final = date("d-m-Y", strtotime($user->date_first_purchase ));}} - Date of the next purchase : {{$final = date("d-m-Y", strtotime($user->date_first_purchase . "+1 month"));}}  </li>
-                @endforeach
+                    <li>This User purchased {{$user->payment_number}} times  </li>
+                    <li>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal{{ $user->id }}">Update</button>
+        </li>
+        <li>
+    <form action="{{ route('user.delete', ['id' => $user->id]) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-danger" type="submit">Delete</button>
+    </form>
+</li>
+                    @endforeach
             </ul>
+            @foreach($usersWithRemainingAmount as $user)
+    <div class="modal fade" id="updateModal{{ $user->id }}" tabindex="-1" aria-labelledby="updateModalLabel{{ $user->id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('user.update', ['id' => $user->id]) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel{{ $user->id }}">Update This User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="newRemainingAmount{{ $user->id }}">New User Name:</label>
+                        <input type="text" id="newRemainingAmount{{ $user->id }}" name="newusername" class="form-control">
+                    </div>
+                    <div class="modal-body">
+                        <label for="newRemainingAmount{{ $user->id }}">New Remaining Amount:</label>
+                        <input type="text" id="newRemainingAmount{{ $user->id }}" name="newRemainingAmount" class="form-control">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
+
 @endsection
