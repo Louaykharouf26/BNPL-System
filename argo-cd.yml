@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bnpl-app
+  namespace: argocd
+spec:
+  destination:
+    namespace: myAKSCluster 
+    server: https://myaksclust-myresourcegroup-94bdf7-d3mno1lh.hcp.eastus.azmk8s.io   # Use your AKS cluster's server address
+    
+  project: default
+  source:
+    path: K8S  # Update the path to the folder containing your K8S manifest files
+    repoURL: https://github.com/Louaykharouf26/BNPL-System.git  # Update the repo URL
+    targetRevision: master  # Specify the branch or tag you want to deploy (e.g., "main")
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
