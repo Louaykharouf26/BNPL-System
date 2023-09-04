@@ -21,23 +21,8 @@ pipeline{
                        }            
                         }
                     } 
-        /*stage("Ansible configruation") {
-            steps {                
-                script {
-                    echo "======== executing ========"
-                        dir ("ansible"){
-                        sh "pwd"
-                        sh "ls"
-                        echo "update hosts"
-                        sh "ansible-playbook update-hosts.yml"
-                        echo "install dependencies "
-                        sh "ansible-playbook -i hosts config-playbook.yml"
-                        echo "configure the environement for the web app "
-                        sh "ansible-playbook -i hosts web-app-config.yml"     
-                       }    }        
-                        }
-                    }              
-                }*/
+         
+                }
             post{
                 success{
                     echo "======== Setting up infra executed successfully ========"
@@ -47,7 +32,7 @@ pipeline{
                 }
             }
              
-        }          }
+        }          
    /* 
     post{
         success{
