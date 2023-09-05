@@ -16,12 +16,12 @@ pipeline{
                         sh "pwd"
                         sh "ls"
                         echo "terraform init"
-                      /*  sh "az login"
-                       sh "az group create --name myResourceGroup --location eastus "     
-                       sh "az aks create -g myResourceGroup -n myAKSCluster --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
-                      */
-                        //sh "az aks get-credentials --resource-group myResourceGroup --name myAKSCluster"
-                       sh "kubectl config use-context myAKSCluster"
+                        sh "az login"
+                       sh "az group create --name myResourceGroup1 --location eastus "     
+                       sh "az aks create -g myResourceGroup -n myAKSCluster1 --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
+                     
+                        sh "az aks get-credentials --resource-group myResourceGroup1 --name myAKSCluster1"
+                       sh "kubectl config use-context myAKSCluster1"
 
                                 dir('K8S') {
                             sh "kubectl apply -f dbsecret.yml"
