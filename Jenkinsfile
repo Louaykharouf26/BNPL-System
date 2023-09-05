@@ -16,7 +16,7 @@ pipeline{
                         sh "pwd"
                         sh "ls"
                         echo "terraform init"
-                        sh "az login"
+                     /*   sh "az login"
                        sh "az group create --name myResourceGroup1 --location eastus "     
                        sh "az aks create -g myResourceGroup1 -n myAKSCluster1 --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
                      
@@ -30,7 +30,7 @@ pipeline{
                             }
                         echo "installing argocd"
                         sh "kubectl create namespace argocd"
-                        sh "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
+                        sh "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"*/
                        sh "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'"
 
                          }            
