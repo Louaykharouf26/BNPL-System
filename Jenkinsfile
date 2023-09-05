@@ -20,8 +20,9 @@ pipeline{
                        sh "az group create --name myResourceGroup --location eastus "     
                        sh "az aks create -g myResourceGroup -n myAKSCluster --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
                       */
-                        sh "az aks get-credentials --resource-group myResourceGroup --name myAKSCluster"
-                    
+                        //sh "az aks get-credentials --resource-group myResourceGroup --name myAKSCluster"
+                       sh "kubectl config use-context myAKSCluster"
+
                                 dir('K8S') {
                             sh "kubectl apply -f dbsecret.yml"
                             sh "kubectl apply -f db-deployment.yml"
