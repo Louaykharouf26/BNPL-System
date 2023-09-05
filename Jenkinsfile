@@ -21,12 +21,15 @@ pipeline{
                         sh "az aks create -g myResourceGroup -n myAKSCluster --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
                         sh "az aks get-credentials --resource-group myResourceGroup --name myAKSCluster"
                                 dir('K8S') {
-            
-            sh "kubectl apply -f dbsecret.yml"
-            sh "kubectl apply -f db-deployment.yml"
-            sh "kubectl apply -f bnpl.yml"
-      }
-                       }            
+                            sh "kubectl apply -f dbsecret.yml"
+                            sh "kubectl apply -f db-deployment.yml"
+                             sh "kubectl apply -f bnpl.yml"
+                            }
+                        echo "installing argocd"
+                        sh "kubectl create namespace argocd"
+                        sh "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
+                        sh "kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'"
+                         }            
                         }
                     } 
          

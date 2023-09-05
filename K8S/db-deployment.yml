@@ -19,9 +19,9 @@ spec:
           env:
             - name: MYSQL_DATABASE
               value: bnpl
-            - name: MYSQL_USER
-              value: root
-            - name: MYSQL_PASSWORD
+          #  - name: MYSQL_USER
+           #   value: root
+            - name: MYSQL_ROOT_PASSWORD 
               value: secret
           ports:
             - containerPort: 3306
