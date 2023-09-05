@@ -18,7 +18,7 @@ pipeline{
                         echo "terraform init"
                         sh "az login"
                        sh "az group create --name myResourceGroup1 --location eastus "     
-                       sh "az aks create -g myResourceGroup -n myAKSCluster1 --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
+                       sh "az aks create -g myResourceGroup1 -n myAKSCluster1 --enable-managed-identity --node-count 1 --enable-addons monitoring --generate-ssh-keys"
                      
                         sh "az aks get-credentials --resource-group myResourceGroup1 --name myAKSCluster1"
                        sh "kubectl config use-context myAKSCluster1"
